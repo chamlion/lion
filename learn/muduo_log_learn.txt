@@ -7,15 +7,15 @@ FixedBuffer
   --length()     buffer中保存的数据长度 
   --avail()      buffer中可用空间
   --bzero()      buffer 清零
-LogStream   
+LogStream    只负责把各种数据写入到buffer中
   --Buffer采用的是FixedBuffer 
   -- >>   重载"<<"运算符，将数据输出到buffer中
   -- void formatInteger(T) 调用convert，将将数字转换为string，并写入到buffer
-  -- ～Buffer()输出buffer中的数据到指定文件或流，然后flush
+  -- ～Buffer()输出buffer中的数据到指定文件或流
 int len = snprintf(buffer_.current(), kMaxNumericSize, "%.12g", v);
 将浮点数格式化输出到buffer中
 
-Logger 
+Logger   负责将各种数据输出到指定文件或流中
   -- SourceFile  包含的类
           -- char* data_ 文件名指针，strrchr(data_, '/')关键点
   -- Impl  包含的类  在logger类的构造函数中，初始化Impl类
@@ -31,9 +31,14 @@ Logger
   -- stream() 返回LogStream类型对象，该对象声明在Impl中
 #define LOG_INFO if (muduo::Logger::logLevel() <= muduo::Logger::INFO) \
   muduo::Logger(__FILE__, __LINE__).stream()     
-__FILE__, __LINE__ 当前文件名以及行    
+__FILE__, __LINE__ 当前文件名以及行  
+再使用的时候，其实就是创建一个匿名对象，然后在析构的时候，调用flush函数，将buffer中的所有数据输出。
+Logger类分析
+缺点
+频繁的创建销毁对象，效率受影响。
+优点
+简单便捷，适合调试简单的程序时使用  
 
-完整的使用 
 
 
 
