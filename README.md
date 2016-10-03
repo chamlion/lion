@@ -12,7 +12,7 @@
 |-----base
 |      |-----CmakeLists.txt
 |      |-----BlockingQueue.h            实现无锁队列模板类
-|      |-----log.(cc,h)                 实现单例模式的异步日志类，可自定义文件输出位置，日志输出级别 
+|      |-----log.(cc,h)                 实现单例模式的异步日志类，可自定义日志输出位置，日志输出级别 
 |------test                               测试文件
 |      |-----CmakeLists.txt
 |      |-----log_test.cc                   
