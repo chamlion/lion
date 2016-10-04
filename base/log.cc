@@ -13,15 +13,20 @@ namespace lion
     }
   Log::Log()
   :level_(DEBUG),
+  LastRollTime(Timer().now()),
+  RollInterval(3600),
   running(true),
   thread_(std::bind(&Log::ThreadFunc, this))
   {
+    ChangeFile();
   }
   Log::~Log()
   {  
    while(!finish());
    stop();
    g_flush();
+   if(g_file!=NULL)
+   fclose(g_file);
   }
 
   void Log::stop()
@@ -44,10 +49,27 @@ namespace lion
     void Log::LogInfo(const char* file,const int line,const char* fun,const std::string msg)
   { 
    char str[1024];
-   snprintf(str, 1024, "%s-%d-%s-%d-%s\n", FileName(file).c_str(), line,fun, std::this_thread::get_id(),msg.c_str());
+   
+   snprintf(str, 1024, "%s-%s-%d-%s-%d-%s\n", Timer().ToStr(),FileName(file).c_str(), line,fun, std::this_thread::get_id(),msg.c_str());
   // std::cout<<str<<std::endl;
  StrQue.put(static_cast<std::string>(str));
   }
+  void Log::Out2File(const std::string msg)
+{ if ((Timer().now()-LastRollTime)>=RollInterval)
+  {   LastRollTime=Timer().now();
+      ChangeFile();
+      
+  }
+ 
+  fwrite(msg.c_str(), 1,  msg.length() ,g_file);
+}
+void Log::ChangeFile()
+{     if(g_file!=NULL)
+      fclose(g_file);
+      char str[1024]={"log"};
+      strcat(strcat(str,Timer().ToStr()),".log");
+      g_file = fopen(str, "w");
+}
 }
 
 

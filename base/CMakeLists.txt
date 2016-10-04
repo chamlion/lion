@@ -14,6 +14,7 @@ install(TARGETS lion_base DESTINATION lib)
 set(HEADERS
   log.h 
   BlockingQueue.h
+  base.h
   )
 install(FILES ${HEADERS} DESTINATION include/lion/base)
 
